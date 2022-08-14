@@ -93,3 +93,13 @@ export function getComment(id, page, limit = defaultLimit) {
         }
     })
 }
+
+// 获取歌词
+export function getLyric(id) {
+    const url = '/lyric';
+    return axios.get(url, {
+        params: {
+            id
+        }
+    })
+}

@@ -28,6 +28,7 @@
           height: calc(100% - 63px);
         }
       "
+      tip="请输入关键词~"
     />
   </div>
 </template>

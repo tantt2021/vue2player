@@ -8,3 +8,5 @@ export const SET_PLAYING = 'SET_PLAYING'   //修改播放状态
 export const SET_AUDIOELE = 'SET_AUDIOELE' // 修改audio元素
 
 export const SET_HISTORYLIST = 'SET_HISTORYLIST' // 修改播放历史列表
+
+export const SET_PLAYMODE = 'SET_PLAYMODE,'; //修改播放顺序

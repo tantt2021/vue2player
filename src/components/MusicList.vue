@@ -1,45 +1,51 @@
 <template>
-  <!-- 正在播放 -->
-  <div
-    class="playList"
-    :style="{
-      height: father === 'Search' ? '' : '100%',
-      // overflowY: father === 'Search' ? 'scroll' : 'scroll',
-    }"
-  >
-    <!-- <Loading v-model="LoadShow" /> -->
-    <!-- 列表头 -->
-    <div class="list-header">
-      <span class="song">歌曲</span>
-      <span class="singer">歌手</span>
-      <span class="album">专辑</span>
-      <span>时长</span>
+  <div id="musicList">
+    <!-- 正在播放 -->
+    <div
+      class="playList"
+      :style="{
+        height: father === 'Search' ? '' : '100%',
+        // overflowY: father === 'Search' ? 'scroll' : 'scroll',
+      }"
+      v-if="list.length > 0"
+    >
+      <!-- <Loading v-model="LoadShow" /> -->
+      <!-- 列表头 -->
+      <div class="list-header">
+        <span class="song">歌曲</span>
+        <span class="singer">歌手</span>
+        <span class="album">专辑</span>
+        <span>时长</span>
+      </div>
+      <!-- 歌曲 -->
+      <ul class="musicList">
+        <li
+          class="list-item"
+          v-for="(item, index) in list"
+          :key="index"
+          @dblclick="selectItem(item, index, $event)"
+        >
+          <span>{{ index + 1 }}</span>
+          <span class="song">{{ item.name }}</span>
+          <span class="singer">{{ item.singer }}</span>
+          <span class="album">{{ item.album }}</span>
+          <span class="duration">{{ item.duration % 3600 | format }}</span>
+        </li>
+        <!-- <li class="list-item">
+          <span>清空列表</span>
+        </li> -->
+      </ul>
     </div>
-    <!-- 歌曲 -->
-    <ul class="musicList">
-      <li
-        class="list-item"
-        v-for="(item, index) in list"
-        :key="index"
-        @dblclick="selectItem(item, index, $event)"
-      >
-        <span>{{ index + 1 }}</span>
-        <span class="song">{{ item.name }}</span>
-        <span class="singer">{{ item.singer }}</span>
-        <span class="album">{{ item.album }}</span>
-        <span class="duration">{{ item.duration % 3600 | format }}</span>
-      </li>
-      <li class="list-item">
-        <span>清空列表</span>
-      </li>
-    </ul>
+    <Noresult v-else :tip="tip" />
   </div>
 </template>
 
 <script>
 import { format } from "../utils/util";
+import Noresult from "@/base/Noresult";
 export default {
-  props: ["father", "list"],
+  components: { Noresult },
+  props: ["father", "list", "tip"],
   filters: {
     format,
   },
@@ -142,5 +148,8 @@ export default {
       cursor: pointer;
     }
   }
+}
+#musicList {
+  height: 100%;
 }
 </style>

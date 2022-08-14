@@ -1,6 +1,6 @@
 import * as types from './mutation-types';
 import {
-    setUserId,setHistoryList
+    setUserId,setHistoryList,setMode
 
 } from '@/utils/storage'
 
@@ -20,4 +20,9 @@ export const selectPlay = function ({ commit }, { list, index }) {
 // 设置播放历史
 export const setHistory = function ({ commit }, music) {
     commit(types.SET_HISTORYLIST, setHistoryList(music));
+}
+
+// 设置播放顺序
+export const setPlayMode = function ({ commit }, mode) {
+    commit(types.SET_PLAYMODE, setMode(mode));
 }

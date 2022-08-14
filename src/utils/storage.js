@@ -75,3 +75,16 @@ export function setHistoryList(music) {
     storage.set(HISTORYLIST_KEY, JSON.stringify(list));
     return list;
 } 
+
+
+// 播放模式
+const MODE_KEY = 'playerMode';
+// 获取播放模式
+export function getMode() {
+    return storage.get(MODE_KEY, null);
+}
+// 修改播放模式
+export function setMode(mode) {
+    storage.set(MODE_KEY, mode);
+    return mode;
+}

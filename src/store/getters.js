@@ -21,3 +21,6 @@ export const currentMusic = state => {
 
 // 播放历史列表
 export const historyList = state => state.historyList;
+
+// 播放模式
+export const mode = state => state.mode;

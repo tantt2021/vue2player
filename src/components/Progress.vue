@@ -154,7 +154,7 @@ export default {
   .progress-inner {
     position: absolute;
     top: 50%;
-    left: 5px;
+    left: 0px;
     background-color: #fff;
     height: 2px;
     // position: ;

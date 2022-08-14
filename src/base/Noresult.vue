@@ -1,10 +1,19 @@
 <template>
   <div id="noResult">
-    <p>什么都没有，请先登录吧~</p>
+    <p>{{ tip }}</p>
   </div>
 </template>
 
-<script></script>
+<script>
+export default {
+  props: {
+    tip: {
+      type: String,
+      default: "什么都没有，请先登录吧~",
+    },
+  },
+};
+</script>
 
 <style scoped lang="scss">
 #noResult {

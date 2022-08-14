@@ -35,9 +35,13 @@
       />
     </div>
     <!-- 播放模式 -->
-    <span class="iconfont mode">&#xe63e;</span>
+    <span
+      class="mode icon-suijibofang iconfont"
+      @click="modeChange"
+      ref="icon"
+    ></span>
     <!-- 评论 -->
-    <span @click="openComment" class="iconfont comment"> &#xe891; </span>
+    <span @click="openComment" class="iconfont comment">&#xe891;</span>
     <!-- 音量 -->
     <Volume :volume="volume" @volumeChange="volumeChange" />
   </div>
@@ -49,11 +53,18 @@ import playerMusic from "../utils/play";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { silencePromise } from "../utils/util";
 import { playMode } from "@/config";
-import { format } from "../utils/util";
+import { format, randomSortArray } from "../utils/util";
 import Volume from "./Volume.vue";
 import { getVolume, setVolume } from "@/utils/storage";
+import bus from "../utils/bus";
 export default {
   components: { Progress, Volume },
+  props: {
+    lyric: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     const volume = getVolume();
     return {
@@ -140,8 +151,9 @@ export default {
     ...mapMutations({
       setPlaying: "SET_PLAYING",
       setCurrentIndex: "SET_CURRENTINDEX",
+      setPlaylist: "SET_PLAYLIST",
     }),
-    ...mapActions(["setHistory"]),
+    ...mapActions(["setHistory", "setPlayMode"]),
     // 跳转到评论界面
     openComment() {
       if (!this.currentMusic.id) {
@@ -165,6 +177,47 @@ export default {
     progressMusicEnd(percent) {
       this.audioEle.currentTime = this.currentMusic.duration * percent;
     },
+    // 切换播放顺序
+    modeChange() {
+      const mode = (this.mode + 1) % 4;
+      this.setPlayMode(mode);
+      if (mode === playMode.loop) {
+        return;
+      }
+      let list = [];
+      switch (mode) {
+        case playMode.listLoop:
+          list = this.orderlist;
+          this.$refs.icon.classList.remove("icon-suijibofang");
+          this.$refs.icon.classList.add("icon-24gl-repeat");
+          // this.$refs.icon.classList.add("iconfont");
+          // this.$refs.icon.classList.add("mode");
+          break;
+        case playMode.order:
+          list = this.orderlist;
+          this.$refs.icon.classList.remove("icon-24gl-repeat");
+          this.$refs.icon.classList.add("icon-shunxu");
+          // this.$refs.icon.classList.add("iconfont");
+          // this.$refs.icon.classList.add("mode");
+          break;
+        case playMode.random:
+          list = randomSortArray(this.orderlist);
+          this.$refs.icon.classList.remove("icon-shunxu");
+          this.$refs.icon.classList.add("icon-suijibofang");
+          // this.$refs.icon.classList.add("iconfont");
+          // this.$refs.icon.classList.add("mode");
+          break;
+      }
+      this.resetCurrentIndex(list);
+      this.setPlaylist(list);
+    },
+    // 修改当前歌曲索引
+    resetCurrentIndex(list) {
+      const index = list.findIndex((item) => {
+        return item.id === this.currentMusic.id;
+      });
+      this.setCurrentIndex(index);
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -185,9 +238,16 @@ export default {
         this.musicReady = true;
       });
     },
-    // currentTime(newTime) {
-    //   // console.log(newTime, "newTime");
-    // },
+    currentTime(newT) {
+      let lyricIndex = 0;
+      for (let i = 0; i < this.lyric.length; i++) {
+        if (newT > this.lyric[i].time) {
+          lyricIndex = i;
+        }
+      }
+      // this.lyricIndex = lyricIndex;
+      bus.$emit("currentLyricIndex", lyricIndex);
+    },
   },
   computed: {
     percentMusic() {
@@ -202,6 +262,7 @@ export default {
       "mode",
       "playlist",
       "historyList",
+      "orderlist",
     ]),
   },
 };

@@ -30,6 +30,11 @@ export default  {
     // 修改播放历史列表
     [types.SET_HISTORYLIST](state, historyList) {
         state.historyList = historyList;
+    },
+
+    // 修改播放模式
+    [types.SET_PLAYMODE](state, mode) {
+        state.mode = mode;
     }
 
 }

@@ -9,10 +9,10 @@
       </div>
       <!-- 右半主体：播放界面 -->
       <div class="music-right">
-        <Lysic />
+        <Lysic :lyric="lyric" :nolyric="nolyric" />
       </div>
     </div>
-    <MusicBar />
+    <MusicBar :lyric="lyric" />
 
     <!-- 背景遮罩 -->
     <div class="player-bg" :style="{ backgroundImage: imgUrl }"></div>
@@ -26,10 +26,16 @@ import { defaultBG } from "@/config";
 import MusicBar from "../components/MusicBar.vue";
 import Lysic from "../components/Lysic.vue";
 import { mapGetters } from "vuex";
+import { silencePromise, parseLyric } from "../utils/util";
+import { getLyric } from "@/api";
 export default {
   components: { MusicBtn, Common, MusicBar, Lysic },
   data() {
-    return {};
+    return {
+      lyric: [],
+      nolyric: false, // 是否有歌词
+      lyricIndex: 0, // 当前播放歌词下标
+    };
   },
   computed: {
     imgUrl() {
@@ -37,7 +43,38 @@ export default {
         ? `url(${this.currentMusic.image}?param=300y300)`
         : `url(${defaultBG})`;
     },
-    ...mapGetters(["currentMusic"]),
+    ...mapGetters(["currentMusic", "audioEle"]),
+  },
+  watch: {
+    currentMusic(newM, oldM) {
+      if (!newM.id) {
+        this.lyric = [];
+        return;
+      }
+      if (newM.id === oldM.id) {
+        return;
+      }
+      this.audioEle.src = newM.url;
+      // 重置
+      this.lyricIndex = 0;
+      silencePromise(this.audioEle.play());
+      this.$nextTick(() => {
+        this._getLyric(newM.id);
+      });
+    },
+  },
+  methods: {
+    _getLyric(id) {
+      getLyric(id).then((res) => {
+        if (res.nolyric) {
+          this.nolyric = true;
+        } else {
+          this.nolyric = false;
+          this.lyric = parseLyric(res.lrc.lyric);
+        }
+        silencePromise(this.audioEle.play());
+      });
+    },
   },
 };
 </script>

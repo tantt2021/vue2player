@@ -1,4 +1,5 @@
-import { getUserId,getHistoryList } from "../utils/storage";
+import { getUserId, getHistoryList, getMode } from "../utils/storage";
+import { playMode } from "@/config";
 
 export default {
     uid: getUserId() || null, // 网易云音乐UID,
@@ -11,4 +12,6 @@ export default {
     audioEle: null, //audio元素
     
     historyList: getHistoryList() || [], // 播放历史列表
+
+    mode:Number(getMode()) || playMode.listLoop,  // 播放顺序，默认列表循环
 }
